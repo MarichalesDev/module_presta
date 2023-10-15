@@ -48,13 +48,62 @@ class MyModule extends Module
     );
   }
 
- public function getContent(){
-
+    public function getContent()
+   {
+        $output = null;
+            if(Tools::isSubmit('submit')) {
+            $output .= $this->displayConfirmation('Se actualizo la Configuracion del Modulo');
+    }
+    return $output.$this->displayForm();
   }
+    
+  public function displayForm()
+  {
+      // Init Fields form array
+      $form = [
+          'form' => [
+              'legend' => [
+                  'title' => $this->l('Settings'),
+              ],
+              'input' => [
+                  [
+                      'type' => 'file',
+                      'label' => $this->l('Establecer Imagen Desktop'),
+                      'name' => 'MYMODULE_CONFIG',
+                      'size' => 20,
+                      'required' => true,
+                  ],
+                  [
+                    'type' => 'file',
+                    'label' => $this->l('Establecer Imagen Movil '),
+                    'name' => 'MYMODULE_CONFIG',
+                    'size' => 20,
+                    'required' => true,
+                  ],
+              ],
+              'submit' => [
+                  'title' => $this->l('Save'),
+                  'class' => 'btn btn-default pull-right',
+              ],
+          ],
+      ];
   
-  public function getForm(){
-
-
+      $helper = new HelperForm();
+  
+      // Module, token and currentIndex
+      $helper->table = $this->table;
+      $helper->name_controller = $this->name;
+      $helper->token = Tools::getAdminTokenLite('AdminModules');
+      $helper->currentIndex = AdminController::$currentIndex . '&' . http_build_query(['configure' => $this->name]);
+      $helper->submit_action = 'submit' . $this->name;
+  
+      // Default language
+      $helper->default_form_language = (int) Configuration::get('PS_LANG_DEFAULT');
+  
+      // Load current value into the form
+      $helper->fields_value['MYMODULE_CONFIG'] = Tools::getValue('MYMODULE_CONFIG', Configuration::get('MYMODULE_CONFIG'));
+  
+      return $helper->generateForm([$form]);
   }
 
   public function HookDisplayFooterBefore()
