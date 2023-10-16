@@ -98,22 +98,22 @@ if (isset($_POST['submit'])) {
       else {
          //Si la imagen es correcta en tamaño y tipo
          //Se intenta subir al servidor
-         if (move_uploaded_file($temp, 'images/'.$archivo)) {
+         if (move_uploaded_file($temp, './img/'.$archivo)) {
              //Cambiamos los permisos del archivo a 777 para poder modificarlo posteriormente
-             chmod('img/'.$archivo, 0777);
-             //Mostramos el mensaje de que se ha subido co éxito
+             chmod('./img/'.$archivo, 0777);
+             //Mostramos el mensaje de que se ha subido con éxito
              echo '<div><b>Se ha subido correctamente la imagen.</b></div>';
              //Mostramos la imagen subida
-             echo '<p><img src="images/'.$archivo.'"></p>';
+             echo '<p><img src="./img/'.$archivo.'"></p>';
+             Db::getInstance()->Execute(
+                "INSERT INTO '._DB_PREFIX_.'item (id_item, img_path) VALUES ('null', '$archivo')"
+                   );
          }
          else {
             //Si no se ha podido subir la imagen, mostramos un mensaje de error
             echo '<div><b>Ocurrió algún error al subir el fichero. No pudo guardarse.</b></div>';
          }
        }
-       Db::getInstance()->Execute(
-        "INSERT INTO '._DB_PREFIX_.'item (id_item, img_path) VALUES ('null', '$archivo')"
-           );
     }
  }
     }
