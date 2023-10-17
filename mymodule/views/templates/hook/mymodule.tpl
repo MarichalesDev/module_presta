@@ -1,2 +1,0 @@
-<img src="https://media.istockphoto.com/id/1179101263/es/vector/compras-online-con-smartphone-concepto-de-comercio-electr%C3%B3nico-ilustraci%C3%B3n-vectorial.jpg?s=1024x1024&w=is&k=20&c=9A3QCmbGgrdS5099V3MBbXbMjXvWvRCCQyLpA7D_kFA=">
-<p>prefooter</p>
