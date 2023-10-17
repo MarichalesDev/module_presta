@@ -19,7 +19,7 @@ class MyModule extends Module
 
         parent::__construct();
 
-        $this->displayName = $this->l('Modulo de prueba');
+        $this->displayName = $this->l('Modulo');
         $this->description = $this->l('Imagen en Prefooter');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
@@ -38,19 +38,8 @@ class MyModule extends Module
         parent::install() 
         && $this->registerHook('displayFooterBefore')
         && Configuration::updateValue('MYMODULE_NAME', 'my friend')
-        && $this->installDB()
     ); 
   }
-  public function installDB(){
-    Db::getInstance()->Execute(
-        'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'item` (
-        `id_item` int(10) NOT NULL AUTO_INCREMENT ,
-        `img_path` varchar(128) NOT NULL,
-        PRIMARY KEY (`id_item`)
-        ) ENGINE = InnoDB DEFAULT CHARSET=utf8;'
-    );
-  }
-
 
   public function uninstall()
 {
@@ -69,53 +58,22 @@ class MyModule extends Module
      
         // retrieve the value set by the user
         $configValue = (string) Tools::getValue('MYMODULE_CONFIG');
+        $configValue2 = (string) Tools::getValue('MYMODULE_CONF');
 
         // check that the value is valid
-        if (empty($configValue) || !Validate::isGenericName($configValue)) {
+        if (empty($configValue) && empty($configValue2) 
+         || !Validate::isGenericName($configValue) && 
+            !Validate::isGenericName($configValue2) ) {
             // invalid value, show an error
             $output = $this->displayError($this->l('Invalid Configuration value'));
         } else {
             // value is ok, update it and display a confirmation message
             Configuration::updateValue('MYMODULE_CONFIG', $configValue);
+            Configuration::updateValue('MYMODULE_CONF', $configValue2);
             $output = $this->displayConfirmation($this->l('Settings updated'));
         
         }
-          //Si se quiere subir una imagen
-if (isset($_POST['submit'])) {
-    //Recogemos el archivo enviado por el formulario
-    $archivo = $_FILES['MYMODULE_CONFIG']['name'];
-    //Si el archivo contiene algo y es diferente de vacio
-    if (isset($archivo) && $archivo != "") {
-       //Obtenemos algunos datos necesarios sobre el archivo
-       $tipo = $_FILES['MYMODULE_CONFIG']['type'];
-       $tamano = $_FILES['MYMODULE_CONFIG']['size'];
-       $temp = $_FILES['MYMODULE_CONFIG']['tmp_name'];
-       //Se comprueba si el archivo a cargar es correcto observando su extensión y tamaño
-      if (!((strpos($tipo, "gif") || strpos($tipo, "jpeg") || strpos($tipo, "jpg") || strpos($tipo, "png")) && ($tamano < 2000000))) {
-         echo '<div><b>Error. La extensión o el tamaño de los archivos no es correcta.<br/>
-         - Se permiten archivos .gif, .jpg, .png. y de 200 kb como máximo.</b></div>';
-      }
-      else {
-         //Si la imagen es correcta en tamaño y tipo
-         //Se intenta subir al servidor
-         if (move_uploaded_file($temp, './img/'.$archivo)) {
-             //Cambiamos los permisos del archivo a 777 para poder modificarlo posteriormente
-             chmod('./img/'.$archivo, 0777);
-             //Mostramos el mensaje de que se ha subido con éxito
-             echo '<div><b>Se ha subido correctamente la imagen.</b></div>';
-             //Mostramos la imagen subida
-             echo '<p><img src="./img/'.$archivo.'"></p>';
-             Db::getInstance()->Execute(
-                "INSERT INTO '._DB_PREFIX_.'item (id_item, img_path) VALUES ('null', '$archivo')"
-                   );
-         }
-         else {
-            //Si no se ha podido subir la imagen, mostramos un mensaje de error
-            echo '<div><b>Ocurrió algún error al subir el fichero. No pudo guardarse.</b></div>';
-         }
-       }
-    }
- }
+    
     }
 
     // display any message, then the form
@@ -138,14 +96,22 @@ if (isset($_POST['submit'])) {
                       'size' => 20,
                       'required' => true,
                   ], 
-              ],
+                  [
+                    'type' => 'file',
+                    'label' => $this->l('Establecer Imagen Movil'),
+                    'name' => 'MYMODULE_CONF',
+                    'size' => 20,
+                    'required' => true,
+                ], 
+             
+            ],
               'submit' => [
                   'title' => $this->l('Save'),
                   'class' => 'btn btn-default pull-right',
                   'name' => 'submit',
               ],
-          ],
-      ];
+            ]
+        ];
 
       $helper = new HelperForm();
   
@@ -161,15 +127,21 @@ if (isset($_POST['submit'])) {
   
       // Load current value into the form
       $helper->fields_value['MYMODULE_CONFIG'] = Tools::getValue('MYMODULE_CONFIG', Configuration::get('MYMODULE_CONFIG'));
+      $helper->fields_value['MYMODULE_CONF'] = Tools::getValue('MYMODULE_CONF', Configuration::get('MYMODULE_CONF'));
   
+
       return $helper->generateForm([$form]);
 
   }
-
   public function HookDisplayFooterBefore()
   {
+    $imgD = Configuration::get('MYMODULE_CONFIG');
+    $imgR = Configuration::get('MYMODULE_CONF');
+    $this->context->smarty->assign([
+      "imagen" => $imgD,
+    ]);
+
   return $this->display(__FILE__, 'mymodule.tpl');
   }
 
 }
-
