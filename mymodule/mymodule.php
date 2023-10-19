@@ -157,7 +157,7 @@ public function displayForm()
     $helper->default_form_language = (int) Configuration::get('PS_LANG_DEFAULT');
 
     // Load current value into the form
-    $helper->fields_value['IMG_DESKTOP'] = Tools::getValue('IMG_DESKTOP', Configuration::get('MYMODULE_CONFIG'));
+    $helper->fields_value['IMG_DESKTOP'] = Tools::getValue('IMG_DESKTOP', Configuration::get('IMG_DESKTOP'));
 
     return $helper->generateForm([$form]);
   }
