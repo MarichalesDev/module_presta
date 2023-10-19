@@ -62,13 +62,13 @@ public function getContent()
     // this part is executed only when the form is submitted
     if (Tools::isSubmit('submit' . $this->name)) {
 
-        $file = $_FILES["MYMODULE_CONFIG"]["name"];
+        $file = $_FILES["IMG_DESKTOP"]["name"];
 
         $validator = 1;
         
         $file_type = strtolower(pathinfo($file,PATHINFO_EXTENSION));
         
-        $url_temp = $_FILES["MYMODULE_CONFIG"]["tmp_name"]; 
+        $url_temp = $_FILES["IMG_DESKTOP"]["tmp_name"]; 
         
         $url_insert = dirname(__FILE__) . "/img";
         
@@ -78,7 +78,7 @@ public function getContent()
             mkdir($url_insert, 0777, true);
         };
         
-        $file_size = $_FILES["MYMODULE_CONFIG"]["size"];
+        $file_size = $_FILES["IMG_DESKTOP"]["size"];
         if ( $file_size > 1000000) {
           echo "El archivo es muy pesado";
           $validator = 0;
@@ -100,7 +100,7 @@ public function getContent()
         }
         
         // retrieve the value set by the user
-        $configValue = (string) Tools::getValue('MYMODULE_CONFIG');
+        $configValue = (string) Tools::getValue('IMG_DESKTOP');
 
         // check that the value is valid
         if (empty($configValue) || !Validate::isGenericName($configValue)) {
@@ -108,7 +108,7 @@ public function getContent()
             $output = $this->displayError($this->l('Invalid Configuration value'));
         } else {
             // value is ok, update it and display a confirmation message
-            Configuration::updateValue('MYMODULE_CONFIG', $configValue);
+            Configuration::updateValue('IMG_DESKTOP', $configValue);
             $output = $this->displayConfirmation($this->l('Settings updated'));
         }
     }
@@ -132,7 +132,7 @@ public function displayForm()
                 [
                     'type' => 'file',
                     'label' => $this->l('Establecer imagen Desktop'),
-                    'name' => 'MYMODULE_CONFIG',
+                    'name' => 'IMG_DESKTOP',
                     'size' => 20,
                     'required' => true,
                 ],
@@ -157,13 +157,13 @@ public function displayForm()
     $helper->default_form_language = (int) Configuration::get('PS_LANG_DEFAULT');
 
     // Load current value into the form
-    $helper->fields_value['MYMODULE_CONFIG'] = Tools::getValue('MYMODULE_CONFIG', Configuration::get('MYMODULE_CONFIG'));
+    $helper->fields_value['IMG_DESKTOP'] = Tools::getValue('IMG_DESKTOP', Configuration::get('MYMODULE_CONFIG'));
 
     return $helper->generateForm([$form]);
   }
 
   public function HookdisplayFooterBefore(){
-    $img = Configuration::get('MYMODULE_CONFIG');
+    $img = Configuration::get('IMG_DESKTOP');
     $this->smarty->assign([
         'Imagen' => $img,
       
