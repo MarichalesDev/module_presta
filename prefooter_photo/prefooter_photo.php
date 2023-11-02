@@ -62,8 +62,6 @@ class Prefooter_photo extends Module
         Configuration::updateValue('PREFOOTER_PHOTO_LIVE_MODE', false);
 
         return parent::install() &&
-            $this->registerHook('header') &&
-            $this->registerHook('displayBackOfficeHeader') &&
             $this->registerHook('displayHome');
     }
 
